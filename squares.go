@@ -2,15 +2,20 @@ package main
 
 import (
 	"math"
+	"math/rand"
+	"time"
+	"fmt"
 )
 
 const (
-	initialSquares		int = 100
+	initialSquares int = 100
 )
 
 type Game struct {
-	squares				[100]Square
-	remainingSquares	int
+	squares          [100]Square
+	remainingSquares int
+	AfcTeam          string
+	NfcTeam          string
 }
 
 func (self Game) GetRemainingSquares() int {
@@ -18,8 +23,8 @@ func (self Game) GetRemainingSquares() int {
 }
 
 func (self Game) AddSquare(square Square) (success bool) {
-	num := square.getSquareNum()
-	if (self.squares[num].Name == nil) {
+	num := square.GetSquareNum()
+	if self.squares[num].Name == nil {
 		self.squares[num] = square
 		self.remainingSquares--
 		return true
@@ -29,37 +34,37 @@ func (self Game) AddSquare(square Square) (success bool) {
 }
 
 func (self Game) UpdateSquare(square Square) {
-	num := square.getSquareNum()
-	if (self.squares[num].Name != nil && square.Name != nil) {
+	num := square.GetSquareNum()
+	if self.squares[num].Name != nil && square.Name != nil {
 		self.squares[num] = square
-	} else if (self.squares[num].Name != nil && square.Name == nil) {
+	} else if self.squares[num].Name != nil && square.Name == nil {
 		self.squares[num] = square
 		self.remainingSquares++
-	} else if (self.squares[num].Name == nil && square.Name != nil) {
+	} else if self.squares[num].Name == nil && square.Name != nil {
 		self.squares[num] = square
 		self.remainingSquares--
 	}
 }
 
 func (self Game) RemoveSquare(pos int) {
-	if (self.squares[pos].Name != nil) {
+	if self.squares[pos].Name != nil {
 		self.squares[pos].Name = nil
 		self.remainingSquares++
 	}
 }
 
 type Square struct {
-	NfcPos	int
-	AfcPos	int
-	Name	*string
+	NfcPos int
+	AfcPos int
+	Name   *string
 }
 
-func (self Square) getSquareNum() int {
-	return self.AfcPos * 10 + self.NfcPos
+func (self Square) GetSquareNum() int {
+	return self.AfcPos*10 + self.NfcPos
 }
 
-func getPositions(pos int) (afcPos, nfcPos int) {
-	if pos < 0 || pos > initialSquares - 1 {
+func GetPositions(pos int) (afcPos, nfcPos int) {
+	if pos < 0 || pos > initialSquares-1 {
 		return -1, -1
 	}
 	if pos < 10 {
@@ -70,11 +75,22 @@ func getPositions(pos int) (afcPos, nfcPos int) {
 	return
 }
 
+func GetRandomSquareNumbers() (afcNums, nfcNums []int) {
+	rand.Seed(time.Now().UnixNano())
+	afcNums = []int{}
+	nfcNums = []int{}
+	for i := 0; i < 10; i++ {
+		afcNums = append(afcNums, rand.Intn(10))
+		nfcNums = append(nfcNums, rand.Intn(10))
+	}
+	return
+}
+
 func NewGame() Game {
 	game := new(Game)
 	game.remainingSquares = initialSquares
 	for i := 0; i < len(game.squares); i++ {
-		afcPos, nfcPos := getPositions(i)
+		afcPos, nfcPos := GetPositions(i)
 		square := Square{NfcPos: nfcPos, AfcPos: afcPos}
 		game.squares[i] = square
 	}
@@ -82,5 +98,7 @@ func NewGame() Game {
 }
 
 func main() {
-
+	afcNums, nfcNums := GetRandomSquareNumbers()
+	fmt.Println(afcNums)
+	fmt.Println(nfcNums)
 }
