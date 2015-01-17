@@ -5,6 +5,9 @@ import (
 	"math/rand"
 	"time"
 	"fmt"
+	"net/http"
+	"github.com/russross/blackfriday"
+	"strconv"
 )
 
 const (
@@ -77,12 +80,8 @@ func GetPositions(pos int) (afcPos, nfcPos int) {
 
 func GetRandomSquareNumbers() (afcNums, nfcNums []int) {
 	rand.Seed(time.Now().UnixNano())
-	afcNums = []int{}
-	nfcNums = []int{}
-	for i := 0; i < 10; i++ {
-		afcNums = append(afcNums, rand.Intn(10))
-		nfcNums = append(nfcNums, rand.Intn(10))
-	}
+	afcNums = rand.Perm(10)
+	nfcNums = rand.Perm(10)
 	return
 }
 
@@ -97,8 +96,26 @@ func NewGame() Game {
 	return *game
 }
 
-func main() {
+// TODO: Display current Super Bowl Squares status
+func displaySquaresHandler( w http.ResponseWriter, r *http.Request) {
+	mdStr := "# Super Bowl Squares\n\n||"
+
 	afcNums, nfcNums := GetRandomSquareNumbers()
-	fmt.Println(afcNums)
-	fmt.Println(nfcNums)
+
+	for i := 0; i < len(afcNums); i++ {
+		mdStr += strconv.Itoa(afcNums[i]) + "|"
+	}
+	mdStr += "\n|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|"
+	for i := 0; i < len(nfcNums); i++ {
+		mdStr += "\n|**" + strconv.Itoa(nfcNums[i]) + "**|?|?|?|?|?|?|?|?|?|?|?|"
+	}
+	mdBytes := []byte(mdStr)
+	outputBytes := string(blackfriday.MarkdownCommon(mdBytes)[:])
+
+	fmt.Fprintf(w, outputBytes)
+}
+
+func main() {
+	http.HandleFunc("/", displaySquaresHandler)
+	http.ListenAndServe(":8080", nil)
 }
