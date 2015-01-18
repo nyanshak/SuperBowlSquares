@@ -97,7 +97,7 @@ func NewGame() Game {
 }
 
 // TODO: Display current Super Bowl Squares status
-func displaySquaresHandler( w http.ResponseWriter, r *http.Request) {
+func displaySquaresHandler(w http.ResponseWriter, r *http.Request) {
 	mdStr := "# Super Bowl Squares\n\n||"
 
 	afcNums, nfcNums := GetRandomSquareNumbers()
@@ -107,7 +107,15 @@ func displaySquaresHandler( w http.ResponseWriter, r *http.Request) {
 	}
 	mdStr += "\n|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|"
 	for i := 0; i < len(nfcNums); i++ {
-		mdStr += "\n|**" + strconv.Itoa(nfcNums[i]) + "**|?|?|?|?|?|?|?|?|?|?|?|"
+		mdStr += "\n|**" + strconv.Itoa(nfcNums[i]) + "**|"
+		for j := 0; j < 10; j++ {
+			temp := game.squares[i * 10 + j].Name
+			if temp == nil {
+				mdStr += "?|"
+			} else {
+				mdStr += *temp + "|"
+			}
+		}
 	}
 	mdBytes := []byte(mdStr)
 	outputBytes := string(blackfriday.MarkdownCommon(mdBytes)[:])
@@ -115,7 +123,13 @@ func displaySquaresHandler( w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, outputBytes)
 }
 
+var (
+	game = NewGame()
+)
+
 func main() {
+	test := "Test"
+	game.squares[0].Name = &test
 	http.HandleFunc("/", displaySquaresHandler)
 	http.ListenAndServe(":8080", nil)
 }
