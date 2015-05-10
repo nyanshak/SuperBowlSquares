@@ -1,0 +1,45 @@
+.div {
+  float: left;
+  width: 100%;
+}
+
+.afc-label {
+  text-align: center;
+}
+
+
+table.center {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+table .label {
+  font-weight: bold;
+}
+
+#wrap {
+  width: 100%;
+  margin: 0 auto;
+  float: left;
+}
+
+#left {
+  float: left;
+}
+
+#right {
+  width: 20%;
+}
+
+#middle {
+  margin-right: 20%;
+  margin-left: 10%;
+}
+
+table, td, th {
+  border-collapse: collapse;
+  border: solid 1px black;
+  padding: 5px;
+}
+
+.hover {background: red;}

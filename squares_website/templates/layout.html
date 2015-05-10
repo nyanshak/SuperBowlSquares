@@ -1,0 +1,63 @@
+<!doctype html>
+<html>
+<head>
+<title>Squares</title>
+<link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src="{{ url_for('static', filename='main.js') }}"></script>
+</head>
+<body>
+
+<div id="wrap">
+
+<div id="header">
+</div> <!-- close header -->
+
+<div id="main">
+
+<div id="left">
+</div>
+
+<div id="middle">
+
+<input type="hidden" name="year" value="{{ year }}">
+
+<div id="squares-table">
+<table>
+   <tr>
+      <th colspan="12" id="afc-label" class="label">AFC Team</th>
+   </tr>
+   <tr>
+      <td rowspan="11" id="nfc-label" class="label">NFC Team</td>
+      {% for i in range(10) %}
+          <td class="label" data-afc="{{ i }}">?</td>
+      {% endfor %}
+      <td></td>
+   </tr>
+   {% for i in range(10) %}
+       <tr>
+           {% for j in range(10) %}
+               <td data-square-pos="{{i * 10 + j}}" class="tdhover">name</td>
+           {% endfor %}
+           <td class="label" data-nfc="{{ i }}">?</td>
+       </tr>
+   {% endfor %}
+
+</table>
+</div> <!-- close squares-table -->
+
+
+<div id="results">
+</div>
+
+
+</div> <!-- close middle -->
+
+<div id="right">
+</div> <!-- close right -->
+
+</div> <!-- close main -->
+</div> <!-- close wrap -->
+
+</body>
+</html>
