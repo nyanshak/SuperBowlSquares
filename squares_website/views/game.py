@@ -8,8 +8,7 @@ import random
 
 game = Blueprint('game', __name__)
 
-@game.route('/<int:year>')
-def show_game(year):
-    return render_template("layout.html", year=year)
-
+@game.route('/<game_id>')
+def show_game(game_id):
+    return render_template("layout.html", game_id=game_id)
 

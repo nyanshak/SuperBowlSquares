@@ -5,43 +5,62 @@ from flask import Blueprint, jsonify, request
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 import random
+import base64
+import shortuuid
 
 rest_game = Blueprint('rest_game', __name__)
 data_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data")
 
-@rest_game.route('/<int:year>', methods=['GET', 'POST'])
-def show_game(year):
-    if request.method == 'GET':
-        now = datetime.utcnow().year
-        g = load_game(year)
-    
-        if g is None:
-            return jsonify({"success": False, "error": "That game does not exist", "game": None}), 404
-        else:
-            if 'token' in g:
-                del g['token']
-            return jsonify({"success": True, "error": None, "game": g}), 200
-    elif request.method == 'POST':
-        now = datetime.utcnow().year
-        if year < now:
-            return jsonify({"success": False, "error": "Cannot create games in past years", "game": None}), 400
-        try:
-            data = json.loads(request.data)
-            token = data.get('token', None)
-            if token is None or type(token) is not unicode:
-                raise ValueError()
-            g = create_game(year, token)
-            if 'token' in g:
-                del g['token']
-            return jsonify({"success": True, "error": None, "game": g}), 200
-        except ValueError as e:
-            return jsonify({"success": False, "error": "Must pass password token in post data, ex: {\"token\": \"super_secret_password\"}", "game": None}), 400
+@rest_game.route('/create', methods=['POST'])
+def make_game():
+    try:
+        data = json.loads(request.data)
+        name = data.get('name', None)
+        token = data.get('token', None)
+        if token is None or type(token) is not unicode:
+            raise ValueError()
+        g = create_game(name, token)
+        if 'token' in g:
+            del g['token']
+        return jsonify({"success": True, "error": None, "game": g}), 200
+    except ValueError as e:
+        return jsonify({"success": False, "error": "Must pass game name and password token in post data, ex: {\"name\": \"my_awesome_game\", \"token\": \"super_secret_password\"}", "game": None}), 400
 
-@rest_game.route('/<int:year>/teams', methods=['POST'])
-def set_teams(year):
-    g = load_game(year)
+@rest_game.route('/<game_id>', methods=['GET'])
+def show_game(game_id):
+    g = load_game(game_id)
+
     if g is None:
-        return jsonify({"success": False, "error": "No game for that year"}), 404
+        return jsonify({"success": False, "error": "That game does not exist", "game": None}), 404
+    else:
+        if 'token' in g:
+            del g['token']
+        return jsonify({"success": True, "error": None, "game": g}), 200
+
+@rest_game.route('/<game_id>/numbers', methods=['POST'])
+def set_numbers(game_id):
+    g = load_game(game_id)
+    if g is None:
+        return jsonify({"success": False, "error": "No game for that game_id", "game": None}), 404
+    if len(g['afc_values']) and len(g['nfc_values']):
+        return jsonify({"success": False, "error": "Numbers already set", "game": g}), 400
+    try:
+        data = json.loads(request.data)
+        token = data.get('token', None)
+
+        if check_password_hash(g['token'], token):
+            g = set_square_values(g)
+            return jsonify({"success": True, "error": None, "game": g}), 200
+        else:
+            return jsonify({"success": False, "error": "Not authorized to perform that action", "game": None}), 401
+    except ValueError as e:
+        return jsonify({"success": False, "error": "Must post password token, ex: {\"token\": \"super_secret_password\"}"}), 400
+
+@rest_game.route('/<game_id>/teams', methods=['POST'])
+def set_teams(game_id):
+    g = load_game(game_id)
+    if g is None:
+        return jsonify({"success": False, "error": "No game for that game_id"}), 404
     try:
         data = json.loads(request.data)
 
@@ -60,17 +79,14 @@ def set_teams(year):
         return jsonify({"success": False, "error": "Must post AFC and NFC team names, ex: {\"afc_team\": \"Steelers\", \"nfc_team\": \"Cowboys\", \"token\": \"super_secret_password\"}"}), 400
     
     
-@rest_game.route('/<int:year>/square/<int:position>', methods=['POST'])
-def square(year, position):
-    now = datetime.utcnow().year
-    if year < now:
-        return jsonify({"success": False, "error": "Cannot modify this game", "game": None}), 401
+@rest_game.route('/<game_id>/square/<int:position>', methods=['POST'])
+def square(game_id, position):
 
     if position > 99 or position < 0:
         return jsonify({"success": False, "error": "Position must be a value between 0 and 99"}), 400
-    g = load_game(year)
+    g = load_game(game_id)
     if g is None:
-        return jsonify({"success": False, "error": "No game for that year"}), 404
+        return jsonify({"success": False, "error": "No game for that game_id"}), 404
     try:
         data = json.loads(request.data)
 
@@ -100,7 +116,7 @@ def set_square_values(g):
     return g
 
 def save_game(g):
-    game_file = os.path.join(data_path, "%s.json" % g['year'])
+    game_file = os.path.join(data_path, "%s.json" % g['game_id'])
     with open(game_file, 'w') as outfile:
         json.dump(g, outfile)
 
@@ -109,8 +125,8 @@ def gen_square(name=None, email=None, verified=False):
         verified = False
     return {'name': name, 'email': email, 'verified': verified}
 
-def load_game(year):
-    game_file = os.path.join(data_path, "%s.json" % year)
+def load_game(game_id):
+    game_file = os.path.join(data_path, "%s.json" % game_id)
 
     if os.path.isfile(game_file):
         with open(game_file) as json_data:
@@ -119,10 +135,11 @@ def load_game(year):
     else:
         return None
 
-def create_game(year, password):
+def create_game(name, password):
     g = {}
+    g['game_name'] = name
     g['token'] = generate_password_hash(password)
-    g['year'] = year
+    g['game_id'] = shortuuid.ShortUUID().random(length=6)
     g['afc_team'] = None
     g['nfc_team'] = None
     g['nfc_values'] = []

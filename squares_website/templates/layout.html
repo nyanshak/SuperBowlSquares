@@ -20,10 +20,11 @@
 
 <div id="middle">
 
-<input type="hidden" name="year" value="{{ year }}">
+<input type="hidden" name="game_id" value="{{ game_id }}">
 
-<div id="squares-table">
-<table>
+<div>
+<h1 id="game-name"></h1>
+<table id="square-table" class="square-table">
    <tr>
       <th colspan="12" id="afc-label" class="label">AFC Team</th>
    </tr>
@@ -37,7 +38,7 @@
    {% for i in range(10) %}
        <tr>
            {% for j in range(10) %}
-               <td data-square-pos="{{i * 10 + j}}" class="tdhover">name</td>
+               <td data-square-pos="{{i * 10 + j}}" class="td-noname">name</td>
            {% endfor %}
            <td class="label" data-nfc="{{ i }}">?</td>
        </tr>

@@ -1,14 +1,15 @@
 
-$(function() {
-  var year = $('input:hidden[name=year]').val();
 
-  $(".tdhover").hover(function(){
+$(function() {
+  var game_id = $('input:hidden[name=game_id]').val();
+
+  $(".td-noname, .td-named, .td-verified").hover(function(){
     $(this).addClass("hover");
   }, function(){
     $(this).removeClass("hover");
   });
 
-  $.getJSON("/rest/game/" + year, function(data) {
+  $.getJSON("/rest/game/" + game_id, function(data) {
     if (data["success"]) {
        game = data["game"]
        afc_team = game["afc_team"]
@@ -37,9 +38,16 @@ $(function() {
        for (i = 0; i < game["squares"].length; i++) {
            n = game["squares"][i]["name"];
            if (typeof n == 'string' && n.length > 0) {
-               $("[data-square-pos='" + i + "'").html(n);
+               square = $("[data-square-pos='" + i + "'");
+               square.html(n);
+               if (game["squares"][i]["verified"]) {
+                   square.addClass("td-verified").removeClass("td-noname");
+               } else {
+                   square.addClass("td-named").removeClass("td-noname");
+               }
            }
        }
+       $("#game-name").text(game["game_name"]).css("text-align", "center");
     }
   }).fail(function(xhr){
     console.log("Failed to load data from server");

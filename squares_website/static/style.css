@@ -3,7 +3,7 @@
   width: 100%;
 }
 
-.afc-label {
+#afc-label {
   text-align: center;
 }
 
@@ -42,4 +42,20 @@ table, td, th {
   padding: 5px;
 }
 
-.hover {background: red;}
+
+.td-noname {
+  background: #F08080;
+}
+
+.td-named {
+  background: #FFA07A;
+}
+
+.td-verified {
+  background: #90EE90;
+}
+
+.hover {
+  background: #F8F8FF;
+}
+
