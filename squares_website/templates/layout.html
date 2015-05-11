@@ -30,17 +30,17 @@
    </tr>
    <tr>
       <td rowspan="11" id="nfc-label" class="label">NFC Team</td>
+      <td></td>
       {% for i in range(10) %}
           <td class="label" data-afc="{{ i }}">?</td>
       {% endfor %}
-      <td></td>
    </tr>
    {% for i in range(10) %}
        <tr>
+           <td class="label" data-nfc="{{ i }}">?</td>
            {% for j in range(10) %}
                <td data-square-pos="{{i * 10 + j}}" class="td-noname">name</td>
            {% endfor %}
-           <td class="label" data-nfc="{{ i }}">?</td>
        </tr>
    {% endfor %}
 
@@ -58,6 +58,10 @@
 </div> <!-- close right -->
 
 </div> <!-- close main -->
+
+<div id="footer">
+<p>Powered by <a href="https://github.com/nyanshak/squares">Open Source</a></p>
+</div>
 </div> <!-- close wrap -->
 
 </body>

@@ -59,3 +59,12 @@ table, td, th {
   background: #F8F8FF;
 }
 
+#footer {
+  position:fixed;
+  height:50px;
+  background-color: #D4D4D8;
+  bottom:0px;
+  left:0px;
+  right:0px;
+  margin-bottom:0px;
+}

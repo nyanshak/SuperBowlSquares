@@ -1,6 +1,7 @@
 
 
 $(function() {
+
   var game_id = $('input:hidden[name=game_id]').val();
 
   $(".td-noname, .td-named, .td-verified").hover(function(){
@@ -39,7 +40,7 @@ $(function() {
            n = game["squares"][i]["name"];
            if (typeof n == 'string' && n.length > 0) {
                square = $("[data-square-pos='" + i + "'");
-               square.html(n);
+               square.text(n);
                if (game["squares"][i]["verified"]) {
                    square.addClass("td-verified").removeClass("td-noname");
                } else {

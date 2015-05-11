@@ -115,11 +115,6 @@ def set_square_values(g):
     save_game(g)
     return g
 
-def save_game(g):
-    game_file = os.path.join(data_path, "%s.json" % g['game_id'])
-    with open(game_file, 'w') as outfile:
-        json.dump(g, outfile)
-
 def gen_square(name=None, email=None, verified=False):
     if verified is None:
         verified = False
@@ -148,6 +143,12 @@ def create_game(name, password):
     g['remaining_squares'] = 100
     save_game(g)
     return g
+
+def save_game(g):
+    
+    game_file = os.path.join(data_path, "%s.json" % g['game_id'])
+    with open(game_file, 'w') as outfile:
+        json.dump(g, outfile)
 
 def get_random_values():
     lst = range(10)
