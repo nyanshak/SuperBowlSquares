@@ -1,14 +1,13 @@
-import os
-import os.path
-import json
-from flask import Blueprint, jsonify, request, render_template
-from datetime import datetime
-from werkzeug.security import generate_password_hash, check_password_hash
-import random
+from flask import Blueprint, render_template
 
 game = Blueprint('game', __name__)
 
+
 @game.route('/<game_id>')
 def show_game(game_id):
-    return render_template("layout.html", game_id=game_id)
+    return render_template("game.html", game_id=game_id)
 
+
+@game.route('/create')
+def create_game():
+    return render_template("create.html")

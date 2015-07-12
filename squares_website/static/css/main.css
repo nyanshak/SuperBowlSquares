@@ -3,10 +3,15 @@
   width: 100%;
 }
 
+.square-table {
+  margin-left: auto;
+  margin-right: auto;
+
+}
+
 #afc-label {
   text-align: center;
 }
-
 
 table.center {
   margin-left: auto;
@@ -42,7 +47,6 @@ table, td, th {
   padding: 5px;
 }
 
-
 .td-noname {
   background: #F08080;
 }
@@ -60,11 +64,11 @@ table, td, th {
 }
 
 #footer {
-  position:fixed;
-  height:50px;
+  position: fixed;
+  height: 50px;
   background-color: #D4D4D8;
-  bottom:0px;
-  left:0px;
-  right:0px;
-  margin-bottom:0px;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+  margin-bottom: 0px;
 }

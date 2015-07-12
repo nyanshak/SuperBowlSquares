@@ -1,10 +1,11 @@
 <!doctype html>
 <html>
 <head>
+{% block head %}
 <title>Squares</title>
-<link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
+<link rel=stylesheet type=text/css href="{{ url_for('static', filename='css/main.css') }}">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-<script src="{{ url_for('static', filename='main.js') }}"></script>
+{% endblock %}
 </head>
 <body>
 
@@ -16,42 +17,11 @@
 <div id="main">
 
 <div id="left">
-</div>
+</div> <!-- close left -->
 
 <div id="middle">
-
-<input type="hidden" name="game_id" value="{{ game_id }}">
-
-<div>
-<h1 id="game-name"></h1>
-<table id="square-table" class="square-table">
-   <tr>
-      <th colspan="12" id="afc-label" class="label">AFC Team</th>
-   </tr>
-   <tr>
-      <td rowspan="11" id="nfc-label" class="label">NFC Team</td>
-      <td></td>
-      {% for i in range(10) %}
-          <td class="label" data-afc="{{ i }}">?</td>
-      {% endfor %}
-   </tr>
-   {% for i in range(10) %}
-       <tr>
-           <td class="label" data-nfc="{{ i }}">?</td>
-           {% for j in range(10) %}
-               <td data-square-pos="{{i * 10 + j}}" class="td-noname">name</td>
-           {% endfor %}
-       </tr>
-   {% endfor %}
-
-</table>
-</div> <!-- close squares-table -->
-
-
-<div id="results">
-</div>
-
-
+{% block middle_div %}
+{% endblock %}
 </div> <!-- close middle -->
 
 <div id="right">
@@ -60,8 +30,9 @@
 </div> <!-- close main -->
 
 <div id="footer">
-<p>Powered by <a href="https://github.com/nyanshak/squares">Open Source</a></p>
-</div>
+  <p>Powered by <a href="https://github.com/nyanshak/squares">Open Source</a></p>
+</div> <!-- close footer -->
+
 </div> <!-- close wrap -->
 
 </body>

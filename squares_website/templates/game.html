@@ -1,0 +1,14 @@
+{% extends "layout.html" %}
+{% block head %}
+  {{ super() }}
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+{% endblock %}
+{% block middle_div %}
+  {{ super() }}
+  <input type="hidden" name="gameId" value="{{game_id}}">
+
+  <div id="game-div" style="display: none;">
+  <h1 id="game_name"></h1>
+  {% include 'game_table.html' %}
+  </div>
+{% endblock %}

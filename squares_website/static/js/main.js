@@ -2,7 +2,7 @@
 
 $(function() {
 
-  var game_id = $('input:hidden[name=game_id]').val();
+  var gameId = $('input:hidden[name=gameId]').val();
 
   $(".td-noname, .td-named, .td-verified").hover(function(){
     $(this).addClass("hover");
@@ -10,7 +10,7 @@ $(function() {
     $(this).removeClass("hover");
   });
 
-  $.getJSON("/rest/game/" + game_id, function(data) {
+  $.getJSON("/rest/game/" + gameId, function(data) {
     if (data["success"]) {
        game = data["game"]
        afc_team = game["afc_team"]
@@ -48,10 +48,14 @@ $(function() {
                }
            }
        }
-       $("#game-name").text(game["game_name"]).css("text-align", "center");
+       $("#game_name").html(game["game_name"]).css('text-align', 'center')
     }
+    $("#game-div").show()
   }).fail(function(xhr){
-    console.log("Failed to load data from server");
+    url = 'create'
+    window.setTimeout(function(){ window.location.href = url }, 5000)
+    $("#middle").html('<h1>Error</h1><p>That game does not exist. Click <a href="' + url + '">here</a> to make a new game.')
+    $("#game-div").show()
   });
   
 });
