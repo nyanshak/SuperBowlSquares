@@ -3,3 +3,5 @@
 *.sh
 config.py
 *.pyc
+.env
+.venv
