@@ -2,9 +2,9 @@ $(function(){
     $("#gameBtn").click(function(evt) {
         evt.preventDefault()
         $.ajax({
-            url: '/rest/game/create',
+            url: '/api/game/create',
             type: 'POST',
-            data: JSON.stringify({name: $("#gameName").val(), token: $("#gameToken").val()}),
+            data: JSON.stringify({game_name: $("#game_name").val(), email: $("#email").val()}),
             contentType: "application/json",
             success: function(data) {
                 gameId = data['game']['game_id']
@@ -26,7 +26,7 @@ $(function(){
                 })
             },
             error: function(xhr, ajaxOptions, thrownError) {
-                e = "You must provide a password"
+                e = "You must provide a game name and email."
                 BootstrapDialog.show({
                     title: 'Error',
                     message: e,
